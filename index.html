@@ -82,7 +82,9 @@ header{
 /* Hide desktop menu on small screens */
 @media (max-width: 760px){
   .menu{display:none}
+  .hamburger{display:grid}
 }
+@media (min-width: 761px){ .hamburger{display:none} }
 
 /* HERO */
 .hero{
@@ -188,8 +190,9 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 .hidden{display:none !important}
 
 /* Mobile dropdown menu */
-.mobile-menu{position:fixed; left:0; right:0; top:64px; z-index:49; background:var(--white); box-shadow:0 12px 24px rgba(0,0,0,.12); display:none; grid-template-columns:1fr; gap:4px; padding:10px 12px; max-height:0; overflow:hidden; opacity:0; transition:max-height .3s ease, opacity .3s ease}
+.mobile-menu{position:fixed; left:0; right:0; top:64px; z-index:49; background:var(--white); box-shadow:0 12px 24px rgba(0,0,0,.12); display:grid; grid-template-columns:1fr; gap:4px; padding:10px 12px; max-height:0; overflow:hidden; opacity:0; pointer-events:none; transition:max-height .3s ease, opacity .3s ease}
 .mobile-menu.open{max-height:340px; opacity:1}
+.mobile-menu.open{pointer-events:auto}
 .mobile-menu a{padding:14px; border-radius:10px; font-weight:700; color:#0f172a}
 .mobile-menu a:active{background:#f3f4f6}
 @media (max-width:760px){ .mobile-menu{display:grid} }
@@ -384,8 +387,8 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
     <div class="container">
       <h2 class="section-title" id="contactTitle" data-i18n="contact_title">Contactez-nous</h2>
 
-      <div class="grid grid-2">
-        <article class="card" aria-labelledby="formTitle">
+      <div class="grid grid-2" style="justify-items:center">
+        <article class="card contact-form" aria-labelledby="formTitle" style="width:100%; max-width:680px">
           <h3 id="formTitle" class="card-title" data-i18n="form_title">Formulaire</h3>
           <form id="contactForm" novalidate>
             <label>
@@ -533,7 +536,7 @@ langBtn.addEventListener('click', ()=>{
 applyLang(currentLang());
 
 /* ---------- SIMPLE ACTIVE LINK ON SCROLL ---------- */
-const sections = ['accueil','apropos','services','clients','contact'].map(id=>document.getElementById(id));
+const sections = ['accueil','apropos','services','galerie','clients','contact'].map(id=>document.getElementById(id));
 const menuAnchors = Array.from(document.querySelectorAll('.menu a, #mobileMenu a'));
 const observer = new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
