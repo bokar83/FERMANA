@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Update the URL below after deployment
+Sitemap: https://example.com/sitemap.xml
+
+
