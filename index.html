@@ -87,6 +87,11 @@ header{
 .menu a{padding:.5rem .25rem; font-weight:600; color:#0f172a}
 .menu a.active{color:var(--green)}
 
+/* Hide desktop menu on small screens */
+@media (max-width: 760px){
+  .menu{display:none}
+}
+
 /* HERO */
 .hero{
   background:
@@ -190,6 +195,11 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 .small{font-size:.92rem}
 .hidden{display:none !important}
 
+/* Mobile dropdown menu */
+.mobile-menu{position:sticky; top:64px; z-index:49; background:var(--white); box-shadow:0 12px 24px rgba(0,0,0,.12); display:grid; gap:4px; padding:10px 12px}
+.mobile-menu a{padding:12px; border-radius:10px; font-weight:700; color:#0f172a}
+.mobile-menu a:active{background:#f3f4f6}
+
 /* REDUCED MOTION */
 @media (prefers-reduced-motion: reduce) {
   html{scroll-behavior:auto}
@@ -225,12 +235,21 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
     <div class="nav-actions">
       <button class="lang-toggle" id="langBtn" aria-label="Basculer la langue">FR</button>
       <button class="lang-toggle" id="themeBtn" aria-label="Basculer le thème" title="Thème">🌙</button>
-      <button class="hamburger" aria-label="Menu">
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span>
       </button>
     </div>
   </div>
 </header>
+
+<!-- Mobile dropdown menu -->
+<nav id="mobileMenu" class="mobile-menu hidden" aria-label="Menu mobile">
+  <a href="#accueil" data-i18n="nav_home">Accueil</a>
+  <a href="#apropos" data-i18n="nav_about">À propos</a>
+  <a href="#services" data-i18n="nav_services">Services</a>
+  <a href="#clients" data-i18n="nav_clients">Partenaires</a>
+  <a href="#contact" data-i18n="nav_contact">Contact</a>
+</nav>
 
 <main id="top">
   <!-- HERO -->
@@ -473,7 +492,7 @@ applyLang(currentLang());
 
 /* ---------- SIMPLE ACTIVE LINK ON SCROLL ---------- */
 const sections = ['accueil','apropos','services','clients','contact'].map(id=>document.getElementById(id));
-const menuAnchors = Array.from(document.querySelectorAll('.menu a'));
+const menuAnchors = Array.from(document.querySelectorAll('.menu a, #mobileMenu a'));
 const observer = new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){
@@ -483,6 +502,20 @@ const observer = new IntersectionObserver(entries=>{
   });
 },{root:null, rootMargin:'-40% 0px -50% 0px', threshold:0});
 sections.forEach(sec=>observer.observe(sec));
+
+/* ---------- MOBILE MENU TOGGLE ---------- */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', ()=>{
+  const open = mobileMenu.classList.toggle('hidden');
+  const expanded = !open;
+  hamburger.setAttribute('aria-expanded', String(expanded));
+});
+// close menu on link click
+document.querySelectorAll('#mobileMenu a').forEach(a=>a.addEventListener('click',()=>{
+  mobileMenu.classList.add('hidden');
+  hamburger.setAttribute('aria-expanded','false');
+}));
 
 /* ---------- CONTACT FORM: MAILTO ---------- */
 document.getElementById('contactForm').addEventListener('submit', function(e){
