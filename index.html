@@ -22,16 +22,8 @@
   --focus: 0 0 0 3px rgba(0,107,60,.35);
   --tap:44px;
 }
-@media (prefers-color-scheme: dark){
-  :root{ --bg:#0f1111; --text:#f5f5f5; --muted:#b7bac1; }
-}
-/* Explicit theme overrides (persisted) */
-html[data-theme="light"]{
-  --bg:#FFFFFF; --text:#1c1c1c; --muted:#6b7280; --white:#FFFFFF; --shadow:0 8px 24px rgba(0,0,0,.08);
-}
-html[data-theme="dark"]{
-  --bg:#0f1111; --text:#f5f5f5; --muted:#b7bac1; --white:#0b0d0e; --shadow:0 8px 24px rgba(0,0,0,.40);
-}
+/* Optional OS dark scheme support (kept minimal) */
+@media (prefers-color-scheme: dark){ :root{ --bg:#0f1111; --text:#f5f5f5; --muted:#b7bac1; } }
 
 /* RESET + BASE */
 *{box-sizing:border-box}
@@ -239,7 +231,6 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
     </nav>
     <div class="nav-actions">
       <button class="lang-toggle" id="langBtn" aria-label="Basculer la langue">FR</button>
-      <button class="lang-toggle" id="themeBtn" aria-label="Basculer le thème" title="Thème">🌙</button>
       <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span>
       </button>
@@ -396,6 +387,16 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
           </div>
         </article>
       </div>
+
+      <!-- Google Map Localization -->
+      <div class="card" style="margin-top:16px" aria-label="Localisation sur Google Maps">
+        <iframe title="FERMANA Mining – Carte" width="100%" height="320" style="border:0; border-radius:12px" loading="lazy" allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Quartier%20Almamya%202%2C%20Immeuble%20Hafia%2C%208e%20%C3%A9tage%2C%20Conakry%2C%20Guin%C3%A9e&output=embed"></iframe>
+        <p class="small" style="margin-top:8px">
+          <a href="https://www.google.com/maps/search/?api=1&query=Quartier%20Almamya%202%2C%20Immeuble%20Hafia%2C%208e%20%C3%A9tage%2C%20Conakry%2C%20Guin%C3%A9e" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+        </p>
+      </div>
     </div>
   </section>
 </main>
@@ -437,7 +438,7 @@ const i18n = {
     form_title:"Formulaire", form_name:"Nom complet", form_email:"Adresse e‑mail", form_msg:"Message", form_submit:"Envoyer",
     privacy_hint:"En envoyant, vous acceptez que nous utilisions ces informations pour vous répondre. Aucune donnée n’est partagée.",
     contact_meta_title:"Coordonnées",
-    addr_title:"Localisation", addr_body:"Conakry, République de Guinée",
+    addr_title:"Localisation", addr_body:"Quartier Almamya 2, Immeuble Hafia, 8e étage – Conakry, République de Guinée",
     phone_title:"Téléphone",
     chat_title:"Assistant (démo)", chat_welcome:"Bonjour 👋 ! Comment pouvons‑nous vous aider aujourd’hui ?", chat_send:"Envoyer",
     footer_rights:"Tous droits réservés."
@@ -465,7 +466,7 @@ const i18n = {
     form_title:"Form", form_name:"Full name", form_email:"Email address", form_msg:"Message", form_submit:"Send",
     privacy_hint:"By sending, you agree that we use this information to reply. No data is shared.",
     contact_meta_title:"Contact details",
-    addr_title:"Location", addr_body:"Conakry, Republic of Guinea",
+    addr_title:"Location", addr_body:"Almamya 2 District, Hafia Building, 8th floor – Conakry, Republic of Guinea",
     phone_title:"Phone",
     chat_title:"Assistant (demo)", chat_welcome:"Hello 👋 How can we help you today?", chat_send:"Send",
     footer_rights:"All rights reserved."
@@ -601,33 +602,7 @@ updateWhatsAppHref();
 /* ---------- YEAR ---------- */
 document.getElementById('year').textContent = new Date().getFullYear();
 
-/* ---------- THEME TOGGLE (Light/Dark) ---------- */
-const themeBtn = document.getElementById('themeBtn');
-function setTheme(t){
-  const html = document.documentElement;
-  html.setAttribute('data-theme', t);
-  localStorage.setItem('theme', t);
-  // Force body background to the computed CSS variable to avoid any flash
-  const styles = getComputedStyle(html);
-  document.body.style.backgroundColor = styles.getPropertyValue('--bg').trim();
-  // Show the icon for the OTHER mode (sun when dark; moon when light)
-  if(t==='dark'){
-    themeBtn.textContent = '☀️';
-    themeBtn.setAttribute('aria-label', currentLang()==='fr' ? 'Passer en mode clair' : 'Switch to light mode');
-  } else {
-    themeBtn.textContent = '🌙';
-    themeBtn.setAttribute('aria-label', currentLang()==='fr' ? 'Passer en mode sombre' : 'Switch to dark mode');
-  }
-}
-// Initialize from saved value or system preference
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-const savedTheme = localStorage.getItem('theme');
-const initialTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
-setTheme(initialTheme);
-themeBtn.addEventListener('click', ()=>{
-  const next = (document.documentElement.getAttribute('data-theme')==='dark') ? 'light' : 'dark';
-  setTheme(next);
-});
+// (Theme toggle removed per request)
 </script>
 </body>
 </html>
