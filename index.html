@@ -196,9 +196,14 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 .hidden{display:none !important}
 
 /* Mobile dropdown menu */
-.mobile-menu{position:sticky; top:64px; z-index:49; background:var(--white); box-shadow:0 12px 24px rgba(0,0,0,.12); display:grid; gap:4px; padding:10px 12px}
-.mobile-menu a{padding:12px; border-radius:10px; font-weight:700; color:#0f172a}
+.mobile-menu{position:fixed; left:0; right:0; top:64px; z-index:49; background:var(--white); box-shadow:0 12px 24px rgba(0,0,0,.12); display:none; grid-template-columns:1fr; gap:4px; padding:10px 12px; max-height:0; overflow:hidden; opacity:0; transition:max-height .3s ease, opacity .3s ease}
+.mobile-menu.open{max-height:340px; opacity:1}
+.mobile-menu a{padding:14px; border-radius:10px; font-weight:700; color:#0f172a}
 .mobile-menu a:active{background:#f3f4f6}
+@media (max-width:760px){ .mobile-menu{display:grid} }
+
+/* Slightly taller header on very small phones */
+@media (max-width:400px){ .nav{height:72px} .mobile-menu{top:72px} }
 
 /* REDUCED MOTION */
 @media (prefers-reduced-motion: reduce) {
@@ -243,7 +248,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 </header>
 
 <!-- Mobile dropdown menu -->
-<nav id="mobileMenu" class="mobile-menu hidden" aria-label="Menu mobile">
+<nav id="mobileMenu" class="mobile-menu" aria-label="Menu mobile">
   <a href="#accueil" data-i18n="nav_home">Accueil</a>
   <a href="#apropos" data-i18n="nav_about">À propos</a>
   <a href="#services" data-i18n="nav_services">Services</a>
@@ -506,16 +511,17 @@ sections.forEach(sec=>observer.observe(sec));
 /* ---------- MOBILE MENU TOGGLE ---------- */
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
-hamburger.addEventListener('click', ()=>{
-  const open = mobileMenu.classList.toggle('hidden');
-  const expanded = !open;
-  hamburger.setAttribute('aria-expanded', String(expanded));
-});
+function toggleMenu(force){
+  const isOpen = mobileMenu.classList.contains('open');
+  const willOpen = force!==undefined ? force : !isOpen;
+  mobileMenu.classList.toggle('open', willOpen);
+  hamburger.setAttribute('aria-expanded', String(willOpen));
+}
+hamburger.addEventListener('click', ()=> toggleMenu());
 // close menu on link click
-document.querySelectorAll('#mobileMenu a').forEach(a=>a.addEventListener('click',()=>{
-  mobileMenu.classList.add('hidden');
-  hamburger.setAttribute('aria-expanded','false');
-}));
+document.querySelectorAll('#mobileMenu a').forEach(a=>a.addEventListener('click',()=> toggleMenu(false)));
+// close on escape
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') toggleMenu(false); });
 
 /* ---------- CONTACT FORM: MAILTO ---------- */
 document.getElementById('contactForm').addEventListener('submit', function(e){
@@ -584,7 +590,7 @@ function updateWhatsAppHref(){
     : "Hello, I’d like to know more about your services.";
   const encoded = encodeURIComponent(hi + " (via site FERMANA)");
   // Placeholder number (replace with real)
-  const number = "224700000000";
+  const number = "224610081908";
   waFab.setAttribute('href', `https://wa.me/${number}?text=${encoded}`);
   waFab.setAttribute('target','_blank');
   waFab.setAttribute('rel','noopener');
