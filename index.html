@@ -197,6 +197,13 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 /* Slightly taller header on very small phones */
 @media (max-width:400px){ .nav{height:72px} .mobile-menu{top:72px} }
 
+/* Gallery */
+.gallery{display:grid; gap:12px}
+@media (min-width:760px){ .gallery{grid-template-columns:repeat(2,1fr)} }
+.media-card{background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+.media-thumb{height:180px; background:linear-gradient(135deg,#e2e8f0,#f8fafc); display:grid; place-items:center; color:#334155; font-size:42px}
+.media-body{padding:12px}
+
 /* REDUCED MOTION */
 @media (prefers-reduced-motion: reduce) {
   html{scroll-behavior:auto}
@@ -226,6 +233,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
       <a href="#accueil" data-i18n="nav_home" class="active">Accueil</a>
       <a href="#apropos" data-i18n="nav_about">À propos</a>
       <a href="#services" data-i18n="nav_services">Services</a>
+      <a href="#galerie" data-i18n="nav_gallery">Galerie</a>
       <a href="#clients" data-i18n="nav_clients">Partenaires</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
     </nav>
@@ -243,6 +251,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
   <a href="#accueil" data-i18n="nav_home">Accueil</a>
   <a href="#apropos" data-i18n="nav_about">À propos</a>
   <a href="#services" data-i18n="nav_services">Services</a>
+  <a href="#galerie" data-i18n="nav_gallery">Galerie</a>
   <a href="#clients" data-i18n="nav_clients">Partenaires</a>
   <a href="#contact" data-i18n="nav_contact">Contact</a>
 </nav>
@@ -325,6 +334,39 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
     </div>
   </section>
 
+  <!-- GALERIE -->
+  <section id="galerie" aria-labelledby="galleryTitle">
+    <div class="container">
+      <h2 class="section-title" id="galleryTitle" data-i18n="gallery_title">Galerie</h2>
+      <div class="gallery">
+        <figure class="media-card">
+          <div class="media-thumb">📷</div>
+          <figcaption class="media-body small">Photo – Chantier BTP (exemple)</figcaption>
+        </figure>
+        <figure class="media-card">
+          <div class="media-thumb">📷</div>
+          <figcaption class="media-body small">Photo – Entretien ferroviaire (exemple)</figcaption>
+        </figure>
+        <figure class="media-card">
+          <div class="media-thumb">🎥</div>
+          <figcaption class="media-body small">Vidéo – Logistique & transport (à venir)</figcaption>
+        </figure>
+        <figure class="media-card">
+          <div class="media-thumb">🎥</div>
+          <figcaption class="media-body small">Vidéo – Exploitation minière (à venir)</figcaption>
+        </figure>
+        <figure class="media-card">
+          <div class="media-thumb">📷</div>
+          <figcaption class="media-body small">Photo – Équipements (exemple)</figcaption>
+        </figure>
+        <figure class="media-card">
+          <div class="media-thumb">📷</div>
+          <figcaption class="media-body small">Photo – Équipe (exemple)</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- CLIENTS & PARTENAIRES -->
   <section id="clients" aria-labelledby="clientsTitle" style="background:#1118270a">
     <div class="container">
@@ -371,21 +413,12 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
           <div style="margin-top:16px">
             <h4 class="small muted" data-i18n="contact_meta_title">Coordonnées</h4>
             <p class="small"><strong data-i18n="addr_title">Localisation</strong><br><span data-i18n="addr_body">Conakry, République de Guinée</span></p>
-            <p class="small"><strong data-i18n="phone_title">Téléphone</strong><br><a href="tel:+224000000000">+224 XXX XXX XXX</a></p>
+            <p class="small"><strong data-i18n="phone_title">Téléphone</strong><br><a href="tel:+224610081908">+224 610 08 19 08</a></p>
             <p class="small"><strong>Email</strong><br><a href="mailto:contact@fermanamining.gn">contact@fermanamining.gn</a></p>
           </div>
         </article>
 
-        <article class="chat" aria-labelledby="chatTitle">
-          <h3 id="chatTitle" class="card-title" data-i18n="chat_title">Assistant (démo)</h3>
-          <div class="chat-window" id="chatWindow" aria-live="polite" aria-relevant="additions">
-            <div class="msg bot"><div class="bubble" data-i18n="chat_welcome">Bonjour 👋 ! Comment pouvons‑nous vous aider aujourd’hui ?</div></div>
-          </div>
-          <div class="card" style="display:flex; gap:8px; align-items:center">
-            <input class="input" id="chatInput" placeholder="Écrivez un message…" aria-label="Message">
-            <button class="btn" style="background:#f3f4f6" id="chatSend" data-i18n="chat_send">Envoyer</button>
-          </div>
-        </article>
+        
       </div>
 
       <!-- Google Map Localization -->
@@ -417,6 +450,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 const i18n = {
   fr: {
     nav_home:"Accueil", nav_about:"À propos", nav_services:"Services", nav_clients:"Partenaires", nav_contact:"Contact",
+    nav_gallery:"Galerie",
     hero_title:"Excellence en Mines & Logistique",
     hero_lead:"FERMANA Mining offre des solutions complètes en exploitation minière, entretien ferroviaire, BTP et logistique de pointe en Guinée.",
     cta_contact:"Contactez-nous", cta_services:"Voir nos services",
@@ -440,11 +474,12 @@ const i18n = {
     contact_meta_title:"Coordonnées",
     addr_title:"Localisation", addr_body:"Quartier Almamya 2, Immeuble Hafia, 8e étage – Conakry, République de Guinée",
     phone_title:"Téléphone",
-    chat_title:"Assistant (démo)", chat_welcome:"Bonjour 👋 ! Comment pouvons‑nous vous aider aujourd’hui ?", chat_send:"Envoyer",
+    chat_title:"", chat_welcome:"", chat_send:"",
+    gallery_title:"Galerie",
     footer_rights:"Tous droits réservés."
   },
   en: {
-    nav_home:"Home", nav_about:"About", nav_services:"Services", nav_clients:"Partners", nav_contact:"Contact",
+    nav_home:"Home", nav_about:"About", nav_services:"Services", nav_clients:"Partners", nav_contact:"Contact", nav_gallery:"Gallery",
     hero_title:"Excellence in Mining & Logistics",
     hero_lead:"FERMANA Mining provides end‑to‑end solutions in mining, rail maintenance, civil works and modern logistics in Guinea.",
     cta_contact:"Contact us", cta_services:"See our services",
@@ -468,7 +503,8 @@ const i18n = {
     contact_meta_title:"Contact details",
     addr_title:"Location", addr_body:"Almamya 2 District, Hafia Building, 8th floor – Conakry, Republic of Guinea",
     phone_title:"Phone",
-    chat_title:"Assistant (demo)", chat_welcome:"Hello 👋 How can we help you today?", chat_send:"Send",
+    chat_title:"", chat_welcome:"", chat_send:"",
+    gallery_title:"Gallery",
     footer_rights:"All rights reserved."
   }
 };
@@ -541,46 +577,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e){
 });
 
 /* ---------- CHATBOX PLACEHOLDER ---------- */
-const chatInput = document.getElementById('chatInput');
-const chatWindow = document.getElementById('chatWindow');
-document.getElementById('chatSend').addEventListener('click', sendMessage);
-chatInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); } });
-
-function appendMsg(text, who='user'){
-  const wrapper = document.createElement('div');
-  wrapper.className = 'msg ' + who;
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble';
-  bubble.textContent = text;
-  wrapper.appendChild(bubble);
-  chatWindow.appendChild(wrapper);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-}
-
-function sendMessage(){
-  const text = chatInput.value.trim();
-  if(!text) return;
-  appendMsg(text, 'user');
-  chatInput.value='';
-  setTimeout(async ()=>{
-    const reply = await sendToAssistant(text);
-    appendMsg(reply, 'bot');
-  }, 400);
-}
-
-/* Replace this function to integrate a real API call later */
-async function sendToAssistant(userText){
-  const l = currentLang();
-  if(l==='fr'){
-    if(/prix|tarif/i.test(userText)) return "Nos offres sont adaptées au besoin. Partagez votre projet et nous vous enverrons une proposition.";
-    if(/bonjour|salut/i.test(userText)) return "Bonjour ! Nous sommes à votre écoute.";
-    return "Merci pour votre message. Un membre de l’équipe vous répondra très vite.";
-  }else{
-    if(/price|rate|cost/i.test(userText)) return "Our offers are tailored to your needs. Share your project and we’ll send a proposal.";
-    if(/hello|hi/i.test(userText)) return "Hello! We’re here to help.";
-    return "Thanks for your message. A team member will get back to you shortly.";
-  }
-}
+// assistant placeholder removed
 
 /* ---------- WHATSAPP FAB ---------- */
 const waFab = document.getElementById('waFab');
