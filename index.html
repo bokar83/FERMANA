@@ -33,6 +33,7 @@ body{
   background:var(--bg);
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
+body.menu-open{overflow:hidden}
 img,svg{vertical-align:middle}
 a{color:var(--green); text-decoration:none}
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{outline:none; box-shadow:var(--focus); border-radius:8px}
@@ -65,10 +66,14 @@ header{
   background:transparent; border:none; border-radius:10px;
 }
 .hamburger span, .hamburger span:before, .hamburger span:after{
-  display:block; width:20px; height:2px; background:#111827; content:""; position:relative; border-radius:2px
+  display:block; width:20px; height:2px; background:#111827; content:""; position:relative; border-radius:2px;
+  transition:transform .2s ease, opacity .2s ease, top .2s ease;
 }
 .hamburger span:before{position:absolute; top:-6px}
 .hamburger span:after{position:absolute; top:6px}
+.hamburger.is-open span{background:transparent}
+.hamburger.is-open span:before{top:0; transform:rotate(45deg)}
+.hamburger.is-open span:after{top:0; transform:rotate(-45deg)}
 
 /* SIMPLE MENU (scroll anchors) */
 .menu{
@@ -88,9 +93,14 @@ header{
 .hero{
   background:
     radial-gradient(1200px 300px at 50% -200px, rgba(255,255,255,.12), transparent),
-    linear-gradient(160deg, #0d7a4b 0%, #006B3C 60%);
+    linear-gradient(160deg, rgba(13,122,75,.85) 0%, rgba(0,107,60,.85) 60%),
+    url('images/FERMANA-10.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color:#fff;
   padding:64px 0 48px;
+  position:relative;
 }
 .hero h1{
   font-size: clamp(28px, 6vw, 48px);
@@ -121,6 +131,38 @@ section{padding:28px 0}
 }
 @media (min-width:760px){
   .grid-2{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Section Background Images */
+#apropos{
+  background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url('images/FERMANA-02.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#services{
+  background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url('images/FERMANA-03.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#galerie{
+  background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url('images/FERMANA-04.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#clients{
+  background: linear-gradient(rgba(17,24,39,.15), rgba(17,24,39,.15)), url('images/FERMANA-05.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#contact{
+  background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url('images/FERMANA-06.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* CARDS */
@@ -203,6 +245,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 @media (min-width:760px){ .gallery{grid-template-columns:repeat(2,1fr)} }
 .media-card{background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
 .media-thumb{height:180px; background:linear-gradient(135deg,#e2e8f0,#f8fafc); display:grid; place-items:center; color:#334155; font-size:42px}
+.media-thumb img, img.media-thumb{width:100%; height:180px; object-fit:cover; display:block}
 .media-body{padding:12px}
 
 /* REDUCED MOTION */
@@ -337,35 +380,75 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
       <h2 class="section-title" id="galleryTitle" data-i18n="gallery_title">Galerie</h2>
       <div class="gallery">
         <figure class="media-card">
-          <div class="media-thumb">📷</div>
-          <figcaption class="media-body small">Photo – Chantier BTP (exemple)</figcaption>
+          <img src="images/FERMANA-01.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Opérations minières</figcaption>
         </figure>
         <figure class="media-card">
-          <div class="media-thumb">📷</div>
-          <figcaption class="media-body small">Photo – Entretien ferroviaire (exemple)</figcaption>
+          <img src="images/FERMANA-02.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Exploitation minière</figcaption>
         </figure>
         <figure class="media-card">
-          <div class="media-thumb">🎥</div>
-          <figcaption class="media-body small">Vidéo – Logistique & transport (à venir)</figcaption>
+          <img src="images/FERMANA-03.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Chantier minier</figcaption>
         </figure>
         <figure class="media-card">
-          <div class="media-thumb">🎥</div>
-          <figcaption class="media-body small">Vidéo – Exploitation minière (à venir)</figcaption>
+          <img src="images/FERMANA-04.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Site minier</figcaption>
         </figure>
         <figure class="media-card">
-          <div class="media-thumb">📷</div>
-          <figcaption class="media-body small">Photo – Équipements (exemple)</figcaption>
+          <img src="images/FERMANA-05.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Mine à ciel ouvert</figcaption>
         </figure>
         <figure class="media-card">
-          <div class="media-thumb">📷</div>
-          <figcaption class="media-body small">Photo – Équipe (exemple)</figcaption>
+          <img src="images/FERMANA-06.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Équipements miniers</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-07.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Machinerie lourde</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-08.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Transport de matériaux</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-09.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Opérations de nuit</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-10.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Vue aérienne du site</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-11.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Excavation et chargement</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-12.png" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Activités minières</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-13.jpeg" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Entretien ferroviaire</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-14.jpeg" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Équipe de travail</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-15.jpeg" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Travaux de construction</figcaption>
+        </figure>
+        <figure class="media-card">
+          <img src="images/FERMANA-16.jpeg" alt="FERMANA Mining" class="media-thumb">
+          <figcaption class="media-body small">Chantier ferroviaire</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
   <!-- CLIENTS & PARTENAIRES -->
-  <section id="clients" aria-labelledby="clientsTitle" style="background:#1118270a">
+  <section id="clients" aria-labelledby="clientsTitle">
     <div class="container">
       <h2 class="section-title" id="clientsTitle" data-i18n="clients_title">Clients & Partenaires</h2>
       <div class="card placeholder">
@@ -507,56 +590,177 @@ const i18n = {
 };
 
 /* ---------- LANGUAGE TOGGLE ---------- */
+
 const langBtn = document.getElementById('langBtn');
-const navLinks = document.querySelectorAll('.menu a');
-function currentLang(){ return localStorage.getItem('lang') || 'fr'; }
-function applyLang(l){
-  document.documentElement.lang = l;
-  // Button shows the OTHER language to switch to
-  langBtn.textContent = (l==='fr' ? 'EN' : 'FR');
-  langBtn.setAttribute('aria-label', l==='fr' ? 'Switch language to English' : 'Basculer la langue vers le français');
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key = el.getAttribute('data-i18n');
-    if(i18n[l][key] !== undefined){ el.textContent = i18n[l][key]; }
-  });
-  // Update FAB text
-  updateWhatsAppHref();
+const storage = (()=>{ // guard localStorage (Safari private mode, etc.)
+
+  try{
+
+    const testKey = '__fermana_lang__';
+
+    localStorage.setItem(testKey, testKey);
+
+    localStorage.removeItem(testKey);
+
+    return localStorage;
+
+  }catch(err){
+
+    return null;
+
+  }
+
+})();
+
+let fallbackLang = 'fr';
+
+function currentLang(){
+
+  if(storage){ return storage.getItem('lang') || 'fr'; }
+
+  return fallbackLang;
+
 }
-langBtn.addEventListener('click', ()=>{
-  const next = currentLang()==='fr' ? 'en' : 'fr';
-  localStorage.setItem('lang', next);
-  applyLang(next);
-});
+
+function applyLang(l){
+
+  fallbackLang = l;
+
+  document.documentElement.lang = l;
+
+  // Button shows the OTHER language to switch to
+
+  if(langBtn){
+
+    langBtn.textContent = (l==='fr' ? 'EN' : 'FR');
+
+    langBtn.setAttribute('aria-label', l==='fr' ? 'Switch language to English' : 'Basculer la langue vers le francais');
+
+  }
+
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+
+    const key = el.getAttribute('data-i18n');
+
+    if(i18n[l][key] !== undefined){ el.textContent = i18n[l][key]; }
+
+  });
+
+  // Update FAB text
+
+  updateWhatsAppHref();
+
+}
+
+if(langBtn){
+
+  langBtn.addEventListener('click', ()=>{
+
+    const next = currentLang()==='fr' ? 'en' : 'fr';
+
+    if(storage){
+
+      storage.setItem('lang', next);
+
+    }else{
+
+      fallbackLang = next;
+
+    }
+
+    applyLang(next);
+
+  });
+
+}
+
 applyLang(currentLang());
 
+
+
 /* ---------- SIMPLE ACTIVE LINK ON SCROLL ---------- */
-const sections = ['accueil','apropos','services','galerie','clients','contact'].map(id=>document.getElementById(id));
+
+const sections = ['accueil','apropos','services','galerie','clients','contact']
+
+  .map(id=>document.getElementById(id))
+
+  .filter(Boolean);
+
 const menuAnchors = Array.from(document.querySelectorAll('.menu a, #mobileMenu a'));
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const id = entry.target.id;
-      menuAnchors.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+id));
-    }
-  });
-},{root:null, rootMargin:'-40% 0px -50% 0px', threshold:0});
-sections.forEach(sec=>observer.observe(sec));
+
+if('IntersectionObserver' in window){
+
+  const observer = new IntersectionObserver(entries=>{
+
+    entries.forEach(entry=>{
+
+      if(entry.isIntersecting){
+
+        const id = entry.target.id;
+
+        menuAnchors.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+id));
+
+      }
+
+    });
+
+  },{root:null, rootMargin:'-40% 0px -50% 0px', threshold:0});
+
+  sections.forEach(sec=>observer.observe(sec));
+
+}else if(menuAnchors.length){
+
+  menuAnchors.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#accueil'));
+
+}
+
+
 
 /* ---------- MOBILE MENU TOGGLE ---------- */
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-function toggleMenu(force){
-  const isOpen = mobileMenu.classList.contains('open');
-  const willOpen = force!==undefined ? force : !isOpen;
-  mobileMenu.classList.toggle('open', willOpen);
-  hamburger.setAttribute('aria-expanded', String(willOpen));
-}
-hamburger.addEventListener('click', ()=> toggleMenu());
-// close menu on link click
-document.querySelectorAll('#mobileMenu a').forEach(a=>a.addEventListener('click',()=> toggleMenu(false)));
-// close on escape
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') toggleMenu(false); });
 
+const hamburger = document.getElementById('hamburger');
+
+const mobileMenu = document.getElementById('mobileMenu');
+
+if(hamburger && mobileMenu){
+
+  const mobileLinks = mobileMenu.querySelectorAll('a');
+
+  mobileMenu.setAttribute('aria-hidden','true');
+
+  function toggleMenu(force){
+
+    const isOpen = mobileMenu.classList.contains('open');
+
+    const willOpen = force!==undefined ? force : !isOpen;
+
+    mobileMenu.classList.toggle('open', willOpen);
+
+    hamburger.classList.toggle('is-open', willOpen);
+
+    hamburger.setAttribute('aria-expanded', String(willOpen));
+
+    mobileMenu.setAttribute('aria-hidden', String(!willOpen));
+
+    document.body.classList.toggle('menu-open', willOpen);
+
+  }
+
+  hamburger.addEventListener('click', ()=> toggleMenu());
+
+  mobileLinks.forEach(a=>a.addEventListener('click',()=> toggleMenu(false)));
+
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') toggleMenu(false); });
+  if(window.matchMedia){
+    const mqDesktop = window.matchMedia('(min-width: 761px)');
+    const handleDesktopChange = e=>{ if(e.matches){ toggleMenu(false); } };
+    if(mqDesktop.addEventListener){
+      mqDesktop.addEventListener('change', handleDesktopChange);
+    }else if(mqDesktop.addListener){
+      mqDesktop.addListener(handleDesktopChange);
+    }
+  }
+}
 /* ---------- CONTACT FORM: MAILTO ---------- */
 document.getElementById('contactForm').addEventListener('submit', function(e){
   e.preventDefault();
@@ -600,5 +804,4 @@ document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
-
 
