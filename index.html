@@ -753,6 +753,13 @@ if(contactForm){
       return;
     }
     
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)){
+      alert(currentLangCode === 'fr' ? 'Veuillez entrer une adresse email valide.' : 'Please enter a valid email address.');
+      return;
+    }
+    
     const now = new Date();
     const year = now.getFullYear();
     const month = now.toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -771,29 +778,70 @@ if(contactForm){
     formData.append('_subject', subjectText);
     formData.append('_replyto', email);
     formData.append('_captcha', 'false');
+    formData.append('_template', 'box'); // Better email template
+    formData.append('_autoresponse', currentLangCode === 'fr' 
+      ? 'Merci pour votre message. Nous vous répondrons bientôt.' 
+      : 'Thank you for your message. We will get back to you soon.');
     
     try{
+      console.log('Submitting form to:', contactEndpoint);
+      console.log('Form data:', { name, email, message, subject: subjectText });
+      
       const response = await fetch(contactEndpoint, {
         method: 'POST',
-        headers: { 'Accept': 'application/json' },
+        headers: { 
+          'Accept': 'application/json'
+        },
         body: formData
+        // Note: Don't set Content-Type header - browser will set it automatically with boundary for FormData
       });
       
-      if(!response.ok){
-        throw new Error(`Request failed with status ${response.status}`);
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
+      const responseText = await response.text();
+      console.log('Response text:', responseText);
+      
+      let responseData;
+      try{
+        responseData = JSON.parse(responseText);
+        console.log('Response data:', responseData);
+      }catch(e){
+        console.log('Response is not JSON:', responseText);
       }
       
-      await response.json().catch(() => null);
+      if(!response.ok){
+        const errorMsg = responseData?.message || `Request failed with status ${response.status}`;
+        console.error('FormSubmit error:', errorMsg);
+        
+        // Check if it's an activation/verification issue
+        if(response.status === 200 && responseText.includes('activate') || responseText.includes('verify')){
+          alert(currentLangCode === 'fr'
+            ? 'Veuillez vérifier votre boîte email (fermanagroupe@gmail.com) pour activer le formulaire. Un email de vérification a été envoyé.'
+            : 'Please check your email inbox (fermanagroupe@gmail.com) to activate the form. A verification email has been sent.');
+        }else{
+          throw new Error(errorMsg);
+        }
+        return;
+      }
       
+      // Success - show message
       alert(currentLangCode === 'fr'
-        ? 'Merci, votre message a bien été envoyé.'
-        : 'Thank you, your message has been sent.');
+        ? 'Merci, votre message a bien été envoyé. Vous recevrez une confirmation par email.'
+        : 'Thank you, your message has been sent. You will receive a confirmation email.');
       contactForm.reset();
+      
     }catch(err){
       console.error('Contact form submission error:', err);
+      console.error('Error details:', {
+        message: err.message,
+        stack: err.stack,
+        name: err.name
+      });
+      
       alert(currentLangCode === 'fr'
-        ? 'L\'envoi du message a échoué. Merci de réessayer plus tard.'
-        : 'Sending the message failed. Please try again later.');
+        ? 'L\'envoi du message a échoué. Erreur: ' + err.message + '. Veuillez vérifier la console pour plus de détails.'
+        : 'Sending the message failed. Error: ' + err.message + '. Please check the console for details.');
     }finally{
       if(contactSubmitBtn){
         contactSubmitBtn.disabled = false;
