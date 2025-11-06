@@ -64,6 +64,7 @@ header{
 .hamburger{
   width:var(--tap); height:var(--tap); display:grid; place-items:center;
   background:transparent; border:none; border-radius:10px;
+  position:relative; z-index:100;
 }
 .hamburger span, .hamburger span:before, .hamburger span:after{
   display:block; width:20px; height:2px; background:#111827; content:""; position:relative; border-radius:2px;
@@ -230,10 +231,16 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
 .hidden{display:none !important}
 
 /* Mobile dropdown menu */
-.mobile-menu{position:fixed; left:0; right:0; top:64px; z-index:49; background:var(--white); box-shadow:0 12px 24px rgba(0,0,0,.12); display:grid; grid-template-columns:1fr; gap:4px; padding:10px 12px; max-height:0; overflow:hidden; opacity:0; pointer-events:none; transition:max-height .3s ease, opacity .3s ease}
-.mobile-menu.open{max-height:340px; opacity:1}
-.mobile-menu.open{pointer-events:auto}
-.mobile-menu a{padding:14px; border-radius:10px; font-weight:700; color:#0f172a}
+.mobile-menu{
+  position:fixed; left:0; right:0; top:64px; z-index:49;
+  background:var(--white);
+  box-shadow:0 12px 24px rgba(0,0,0,.12);
+  display:none; grid-template-columns:1fr; gap:4px; padding:10px 12px;
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height .3s ease, opacity .3s ease;
+}
+.mobile-menu.open{max-height:500px; opacity:1; display:grid}
+.mobile-menu a{padding:14px; border-radius:10px; font-weight:700; color:#0f172a; display:block}
 .mobile-menu a:active{background:#f3f4f6}
 @media (max-width:760px){ .mobile-menu{display:grid} }
 
@@ -718,48 +725,38 @@ if('IntersectionObserver' in window){
 
 /* ---------- MOBILE MENU TOGGLE ---------- */
 
+// Hamburger menu - SIMPLIFIED AND FIXED
 const hamburger = document.getElementById('hamburger');
-
 const mobileMenu = document.getElementById('mobileMenu');
 
 if(hamburger && mobileMenu){
-
-  const mobileLinks = mobileMenu.querySelectorAll('a');
-
-  mobileMenu.setAttribute('aria-hidden','true');
-
-  function toggleMenu(force){
-
+  hamburger.addEventListener('click', function(e){
+    e.preventDefault();
     const isOpen = mobileMenu.classList.contains('open');
-
-    const willOpen = force!==undefined ? force : !isOpen;
-
-    mobileMenu.classList.toggle('open', willOpen);
-
-    hamburger.classList.toggle('is-open', willOpen);
-
-    hamburger.setAttribute('aria-expanded', String(willOpen));
-
-    mobileMenu.setAttribute('aria-hidden', String(!willOpen));
-
-    document.body.classList.toggle('menu-open', willOpen);
-
-  }
-
-  hamburger.addEventListener('click', ()=> toggleMenu());
-
-  mobileLinks.forEach(a=>a.addEventListener('click',()=> toggleMenu(false)));
-
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape') toggleMenu(false); });
-  if(window.matchMedia){
-    const mqDesktop = window.matchMedia('(min-width: 761px)');
-    const handleDesktopChange = e=>{ if(e.matches){ toggleMenu(false); } };
-    if(mqDesktop.addEventListener){
-      mqDesktop.addEventListener('change', handleDesktopChange);
-    }else if(mqDesktop.addListener){
-      mqDesktop.addListener(handleDesktopChange);
+    
+    if(isOpen){
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('is-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }else{
+      mobileMenu.classList.add('open');
+      hamburger.classList.add('is-open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
     }
-  }
+  });
+  
+  // Close menu when clicking a link
+  const mobileLinks = mobileMenu.querySelectorAll('a');
+  mobileLinks.forEach(function(link){
+    link.addEventListener('click', function(){
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('is-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    });
+  });
 }
 /* ---------- CONTACT FORM: MAILTO ---------- */
 document.getElementById('contactForm').addEventListener('submit', function(e){
