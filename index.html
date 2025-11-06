@@ -282,7 +282,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
       <a href="#contact" data-i18n="nav_contact">Contact</a>
     </nav>
     <div class="nav-actions">
-      <button class="lang-toggle" id="langBtn" aria-label="Basculer la langue">FR</button>
+      <button class="lang-toggle" id="langBtn" aria-label="Basculer la langue">EN</button>
       <button type="button" class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span>
       </button>
@@ -587,31 +587,36 @@ let currentLangCode = 'fr';
 let waFab = null;
 let langBtn = null;
 
+function applyLang(l){
+  currentLangCode = l;
+  document.documentElement.lang = l;
+  
+  if(langBtn){
+    // When in French, show EN button. When in English, show FR button.
+    langBtn.textContent = (l === 'fr' ? 'EN' : 'FR');
+    langBtn.setAttribute('aria-label', l === 'fr' ? 'Switch language to English' : 'Basculer la langue vers le français');
+  }
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(i18n[l] && i18n[l][key] !== undefined){ 
+      el.textContent = i18n[l][key]; 
+    }
+  });
+  
+  if(waFab && typeof updateWhatsAppHref === 'function'){
+    updateWhatsAppHref();
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function(){
   langBtn = document.getElementById('langBtn');
   waFab = document.getElementById('waFab');
 
-  function applyLang(l){
-    currentLangCode = l;
-    document.documentElement.lang = l;
-    
-    if(langBtn){
-      langBtn.textContent = (l === 'fr' ? 'EN' : 'FR');
-      langBtn.setAttribute('aria-label', l === 'fr' ? 'Switch language to English' : 'Basculer la langue vers le français');
-    }
-    
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if(i18n[l] && i18n[l][key] !== undefined){ 
-        el.textContent = i18n[l][key]; 
-      }
-    });
-    
-    updateWhatsAppHref();
-  }
-
   if(langBtn){
-    langBtn.addEventListener('click', function(){
+    langBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
       const next = currentLangCode === 'fr' ? 'en' : 'fr';
       try{
         localStorage.setItem('lang', next);
@@ -656,7 +661,7 @@ if('IntersectionObserver' in window){
 }
 
 /* ---------- MOBILE MENU TOGGLE - FIXED ---------- */
-document.addEventListener('DOMContentLoaded', function(){
+function initMobileMenu(){
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
 
@@ -689,7 +694,21 @@ document.addEventListener('DOMContentLoaded', function(){
         document.body.classList.remove('menu-open');
       });
     });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e){
+      if(mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)){
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('menu-open');
+      }
+    });
   }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  initMobileMenu();
 });
 
 /* ---------- CONTACT FORM - FIXED EMAIL ---------- */
