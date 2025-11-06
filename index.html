@@ -226,11 +226,20 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
   display:none; grid-template-columns:1fr; gap:4px; padding:10px 12px;
   max-height:0; overflow:hidden; opacity:0;
   transition:max-height .3s ease, opacity .3s ease;
+  pointer-events:none;
 }
-.mobile-menu.open{max-height:500px; opacity:1; display:grid}
+.mobile-menu.open{
+  max-height:500px; 
+  opacity:1; 
+  display:grid;
+  pointer-events:auto;
+}
 .mobile-menu a{padding:14px; border-radius:10px; font-weight:700; color:#0f172a; display:block}
 .mobile-menu a:active{background:#f3f4f6}
-@media (max-width:760px){ .mobile-menu{display:grid} }
+@media (max-width:760px){ 
+  .mobile-menu{display:none}
+  .mobile-menu.open{display:grid}
+}
 
 /* Slightly taller header on very small phones */
 @media (max-width:400px){ .nav{height:72px} .mobile-menu{top:72px} }
@@ -274,7 +283,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
     </nav>
     <div class="nav-actions">
       <button class="lang-toggle" id="langBtn" aria-label="Basculer la langue">FR</button>
-      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
+      <button type="button" class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span>
       </button>
     </div>
@@ -574,8 +583,9 @@ const i18n = {
 };
 
 /* ---------- LANGUAGE TOGGLE ---------- */
-const langBtn = document.getElementById('langBtn');
-let currentLangCode = 'fr';
+  const langBtn = document.getElementById('langBtn');
+  let currentLangCode = 'fr';
+  const waFab = document.getElementById('waFab');
 
 function applyLang(l){
   currentLangCode = l;
@@ -641,63 +651,110 @@ if('IntersectionObserver' in window){
 }
 
 /* ---------- MOBILE MENU TOGGLE - FIXED ---------- */
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
+document.addEventListener('DOMContentLoaded', function(){
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
 
-if(hamburger && mobileMenu){
-  hamburger.addEventListener('click', function(e){
-    e.preventDefault();
-    const isOpen = mobileMenu.classList.contains('open');
-    
-    if(isOpen){
-      mobileMenu.classList.remove('open');
-      hamburger.classList.remove('is-open');
-      hamburger.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('menu-open');
-    }else{
-      mobileMenu.classList.add('open');
-      hamburger.classList.add('is-open');
-      hamburger.setAttribute('aria-expanded', 'true');
-      document.body.classList.add('menu-open');
-    }
-  });
-  
-  // Close menu when clicking a link
-  const mobileLinks = mobileMenu.querySelectorAll('a');
-  mobileLinks.forEach(function(link){
-    link.addEventListener('click', function(){
-      mobileMenu.classList.remove('open');
-      hamburger.classList.remove('is-open');
-      hamburger.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('menu-open');
+  if(hamburger && mobileMenu){
+    hamburger.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const isOpen = mobileMenu.classList.contains('open');
+      
+      if(isOpen){
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('menu-open');
+      }else{
+        mobileMenu.classList.add('open');
+        hamburger.classList.add('is-open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('menu-open');
+      }
     });
-  });
-}
+    
+    // Close menu when clicking a link
+    const mobileLinks = mobileMenu.querySelectorAll('a');
+    mobileLinks.forEach(function(link){
+      link.addEventListener('click', function(){
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('is-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('menu-open');
+      });
+    });
+  }
+});
 
 /* ---------- CONTACT FORM - FIXED EMAIL ---------- */
 const contactForm = document.getElementById('contactForm');
+const contactSubmitBtn = contactForm ? contactForm.querySelector('button[type="submit"]') : null;
+const contactEndpoint = 'https://formsubmit.co/ajax/fermanagroupe@gmail.com'; // FormSubmit relays messages without a custom backend
+
 if(contactForm){
-  contactForm.addEventListener('submit', function(e){
+  contactForm.addEventListener('submit', async function(e){
     e.preventDefault();
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     const message = document.getElementById('message').value.trim();
     
-    if(!name || !email || !message){ 
-      alert(currentLangCode === 'fr' ? 'Veuillez remplir tous les champs.' : 'Please fill out all fields.'); 
-      return; 
+    if(!name || !email || !message){
+      alert(currentLangCode === 'fr' ? 'Veuillez remplir tous les champs.' : 'Please fill out all fields.');
+      return;
     }
     
-    const subject = encodeURIComponent('FERMANA Mining – Nouveau message');
-    const body = encodeURIComponent(`Nom: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-    const mailto = `mailto:fermanagroupe@gmail.com?subject=${subject}&body=${body}`;
-    window.location.href = mailto;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const day = String(now.getDate()).padStart(2, '0');
+    const subjectText = `Contact du site web FERMANAgroupe.com ${year}${month}${day}`;
+    
+    if(contactSubmitBtn){
+      contactSubmitBtn.disabled = true;
+      contactSubmitBtn.textContent = currentLangCode === 'fr' ? 'Envoi en cours...' : 'Sending...';
+    }
+    
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('message', message);
+    formData.append('_subject', subjectText);
+    formData.append('_replyto', email);
+    formData.append('_captcha', 'false');
+    
+    try{
+      const response = await fetch(contactEndpoint, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      });
+      
+      if(!response.ok){
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      
+      await response.json().catch(() => null);
+      
+      alert(currentLangCode === 'fr'
+        ? 'Merci, votre message a bien été envoyé.'
+        : 'Thank you, your message has been sent.');
+      contactForm.reset();
+    }catch(err){
+      console.error('Contact form submission error:', err);
+      alert(currentLangCode === 'fr'
+        ? \"L'envoi du message a échoué. Merci de réessayer plus tard.\"
+        : 'Sending the message failed. Please try again later.');
+    }finally{
+      if(contactSubmitBtn){
+        contactSubmitBtn.disabled = false;
+        contactSubmitBtn.textContent = (i18n[currentLangCode] && i18n[currentLangCode].form_submit) || 'Envoyer';
+      }
+    }
   });
 }
 
 /* ---------- WHATSAPP FAB - FIXED ---------- */
-const waFab = document.getElementById('waFab');
-
 function updateWhatsAppHref(){
   if(!waFab) return;
   
