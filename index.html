@@ -489,7 +489,7 @@ footer{padding:24px 0; background:var(--green); color:#e7f5ee; text-align:center
           </form>
           <div style="margin-top:16px">
             <h4 class="small muted" data-i18n="contact_meta_title">Coordonnées</h4>
-            <p class="small"><strong data-i18n="addr_title">Localisation</strong><br><span data-i18n="addr_body">Conakry, République de Guinée</span></p>
+            <p class="small"><strong data-i18n="addr_title">Localisation</strong><br><span data-i18n="addr_body"></span></p>
             <p class="small"><strong data-i18n="phone_title">Téléphone</strong><br><a href="tel:+224613181518">+224 613 18 15 18</a></p>
             <p class="small"><strong>Email</strong><br><a href="mailto:fermanagroupe@gmail.com">fermanagroupe@gmail.com</a></p>
           </div>
@@ -588,6 +588,7 @@ let waFab = null;
 let langBtn = null;
 
 function applyLang(l){
+  if(!l || (l !== 'fr' && l !== 'en')) l = 'fr';
   currentLangCode = l;
   document.documentElement.lang = l;
   
@@ -597,6 +598,7 @@ function applyLang(l){
     langBtn.setAttribute('aria-label', l === 'fr' ? 'Switch language to English' : 'Basculer la langue vers le français');
   }
   
+  // Update all i18n elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if(i18n[l] && i18n[l][key] !== undefined){ 
@@ -609,20 +611,31 @@ function applyLang(l){
   }
 }
 
+// Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', function(){
   langBtn = document.getElementById('langBtn');
   waFab = document.getElementById('waFab');
 
+  // Set up click handler for language toggle
   if(langBtn){
+    // Remove any existing listeners by cloning
+    const newLangBtn = langBtn.cloneNode(true);
+    langBtn.parentNode.replaceChild(newLangBtn, langBtn);
+    langBtn = newLangBtn;
+    
     langBtn.addEventListener('click', function(e){
       e.preventDefault();
       e.stopPropagation();
       const next = currentLangCode === 'fr' ? 'en' : 'fr';
       try{
         localStorage.setItem('lang', next);
-      }catch(e){}
+      }catch(err){}
       applyLang(next);
     });
+    
+    // Make sure button is clickable
+    langBtn.style.cursor = 'pointer';
+    langBtn.style.pointerEvents = 'auto';
   }
 
   // Initialize language
@@ -665,46 +678,58 @@ function initMobileMenu(){
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
 
-  if(hamburger && mobileMenu){
-    hamburger.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      const isOpen = mobileMenu.classList.contains('open');
-      
-      if(isOpen){
-        mobileMenu.classList.remove('open');
-        hamburger.classList.remove('is-open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('menu-open');
-      }else{
-        mobileMenu.classList.add('open');
-        hamburger.classList.add('is-open');
-        hamburger.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('menu-open');
-      }
-    });
+  if(!hamburger || !mobileMenu) return;
+
+  // Remove any existing listeners by cloning
+  const newHamburger = hamburger.cloneNode(true);
+  hamburger.parentNode.replaceChild(newHamburger, hamburger);
+  const hamburgerEl = newHamburger;
+  
+  // Make sure hamburger is clickable
+  hamburgerEl.style.cursor = 'pointer';
+  hamburgerEl.style.pointerEvents = 'auto';
+  
+  hamburgerEl.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const isOpen = mobileMenu.classList.contains('open');
     
-    // Close menu when clicking a link
-    const mobileLinks = mobileMenu.querySelectorAll('a');
-    mobileLinks.forEach(function(link){
-      link.addEventListener('click', function(){
-        mobileMenu.classList.remove('open');
-        hamburger.classList.remove('is-open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('menu-open');
-      });
+    if(isOpen){
+      mobileMenu.classList.remove('open');
+      hamburgerEl.classList.remove('is-open');
+      hamburgerEl.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }else{
+      mobileMenu.classList.add('open');
+      hamburgerEl.classList.add('is-open');
+      hamburgerEl.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+    }
+  });
+  
+  // Close menu when clicking a link
+  const mobileLinks = mobileMenu.querySelectorAll('a');
+  mobileLinks.forEach(function(link){
+    link.addEventListener('click', function(){
+      mobileMenu.classList.remove('open');
+      hamburgerEl.classList.remove('is-open');
+      hamburgerEl.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
     });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e){
-      if(mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)){
-        mobileMenu.classList.remove('open');
-        hamburger.classList.remove('is-open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('menu-open');
-      }
-    });
-  }
+  });
+  
+  // Close menu when clicking outside (using event delegation)
+  document.addEventListener('click', function(e){
+    if(mobileMenu.classList.contains('open') && 
+       !mobileMenu.contains(e.target) && 
+       !hamburgerEl.contains(e.target) &&
+       e.target !== hamburgerEl){
+      mobileMenu.classList.remove('open');
+      hamburgerEl.classList.remove('is-open');
+      hamburgerEl.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function(){
